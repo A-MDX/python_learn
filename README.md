@@ -9,3 +9,7 @@ the road about learn python
 print('Hello,world!')
 print('Hello,python!')
 ```
+**现在**，使用的是pycharm技术，直接与github相连接。
+
+> 先试着做做看把<br/>
+> 不知道会怎么样
