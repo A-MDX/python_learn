@@ -146,3 +146,5 @@ def readImage(fp):
 'Student'   # 再次调用s.name，由于实例的name属性没有找到，类的name属性就显示出来了
 
 ```
+
+over
