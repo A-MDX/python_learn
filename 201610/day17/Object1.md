@@ -5,6 +5,7 @@
 ### 1.先看一个实例
 
 在python中，类，以及对象的使用，这样子：
+
 ```python
 class Stud(object):
 	def __init__(self,name,score):
