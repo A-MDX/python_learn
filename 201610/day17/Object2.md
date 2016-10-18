@@ -117,3 +117,129 @@ s.width = 1920
 s.height = 1080
 s.resolution   # 1920.00 * 1080.00
 ```
+
+### 3.多重继承
+
+在定义类的时候，可以使用多重继承，通常我们用来添加新功能！
+
+若需要混入额外的功能，通过多重继承就可以实现。这种设计通常成为`MixIn`
+
+```python
+class runnableMixIn(object):
+	def run(self):
+		print('Running...')
+
+class WangwangMixIn(object):
+	def wang(self):
+		print('wang wang wang!')
+
+class Animal(object):
+	pass
+
+class Dog(Animal,runnableMixIn,WangwangMixIn):
+	pass
+
+dog = Dog()
+dog.run()
+dog.wang()
+```
+
+### 4.定制类
+
+就是类似于`__slots__`,`__len__`,我们可以使用这类特殊变量或者函数性定制类。
+
+#### 4.1 __str__
+
+实现print()调用，更加美观，
+
+```python
+class Student(object):
+	def __init__(self,name):
+		self.name = name
+	def __str__(self):
+		return 'Student object (name : %s)' % self.name
+	__repr__ = __str__  # 返回程序开发者看到的字符串，也就是说，__repr__()是为调试服务的。
+	
+a = Student('bbq')
+print(a)   # Student object (name : bbq)
+```
+
+#### 4.2 __iter__
+
+如果一个类想被用于`for ... in`循环，
+类似`list`或`tuple`那样，就必须实现一个`__iter__()`方法，
+该方法返回一个迭代对象，
+然后，Python的for循环就会不断调用该迭代对象的`__next__()`方法拿到循环的下一个值，
+直到遇到`StopIteration`错误时退出循环。
+
+```python
+
+class fib(object):
+	def __init__(self):
+		self.a, self.b = 0,1
+	
+	def __iter__(self):
+		return self
+	
+	def __next__(self):
+		self.a, self.b = self.b, self.a+self.b
+		if self.a > 100:
+			raise StopIteration();
+		return self.a
+
+for i in fib():
+	print(i)
+	
+```
+
+#### 4.3 __getitem__
+
+这个实现了，可以直接通过下标访问数列的任意一级了。
+
+```python
+class Fib(object):
+	def __getitem__(self, item):
+		a, b = 1, 1
+		for x in range(item):
+			a, b = b, a+b
+		return a
+
+f = Fib()
+print(f[1])   # 1
+print(f[20])  # 10946
+print(f[11])  # 144
+```
+
+但是如果中括号里的是切片，则需要重新定义:
+
+```python
+class Fib(object):
+	def __getitem__(self, item):
+		if isinstance(item,int):
+			a, b = 1, 1
+			for x in range(item):
+				a, b = b, a + b
+			return a
+		if isinstance(item,slice):
+			start = item.start
+			stop = item.stop
+			if start is None:
+				start = 0
+			a, b = 1, 1
+			L = []
+			for x in range(stop):
+				if x >= start:
+					L.append(a)
+				a, b = b, a+b
+			return L
+		
+f = Fib()
+print(f[0:5])
+print(f[6:10])
+
+```
+
++ 此外，如果把对象看成dict，__getitem__()的参数也可能是一个可以作key的object，例如str。
++ 与之对应的是__setitem__()方法，把对象视作list或dict来对集合赋值。最后，还有一个__delitem__()方法，用于删除某个元素。
++ 没有对负数作处理，所以，要正确实现一个__getitem__()还是有很多工作要做的;
++ 通过上面的方法，我们自己定义的类表现得和Python自带的list、tuple、dict没什么区别，这完全归功于动态语言的“鸭子类型”，不需要强制继承某个接口

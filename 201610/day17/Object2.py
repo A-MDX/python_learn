@@ -98,3 +98,97 @@ s.width = 1920
 s.height = 1080
 s.resolution
 
+# 3.多重继承
+
+# 如果需要“混入”额外的功能，通过多重继承就可以实现，比如，让Ostrich除了继承自Bird外，再同时继承Runnable。这种设计通常称之为MixIn。
+class runnableMixIn(object):
+	def run(self):
+		print('Running...')
+
+class WangwangMixIn(object):
+	def wang(self):
+		print('wang wang wang!')
+
+class Animal(object):
+	pass
+
+class Dog(Animal,runnableMixIn,WangwangMixIn):
+	pass
+
+dog = Dog()
+dog.run()
+dog.wang()
+
+# 4. 定制类
+
+# 4.1
+class Student(object):
+	def __init__(self,name):
+		self.name = name
+	
+	def __str__(self):
+		return 'Student object (name : %s)' % self.name
+	
+	__repr__ = __str__  # 返回程序开发者看到的字符串，也就是说，__repr__()是为调试服务的。
+	
+	
+a = Student('bbq')
+print(a)   # Student object (name : bbq)
+
+# 4.2
+
+class fib(object):
+	def __init__(self):
+		self.a, self.b = 0,1
+	
+	def __iter__(self):
+		return self
+	
+	def __next__(self):
+		self.a, self.b = self.b, self.a+self.b
+		if self.a > 100:
+			raise StopIteration();
+		return self.a
+
+for i in fib():
+	print(i)
+	
+
+print('---------------------------------------')
+# 4.3
+
+class Fib(object):
+	def __getitem__(self, item):
+		a, b = 1, 1
+		for x in range(item):
+			a, b = b, a+b
+		return a
+
+f = Fib()
+print(f[1])   # 1
+print(f[20])  # 10946
+print(f[11])  # 144
+
+class Fib(object):
+	def __getitem__(self, item):
+		if isinstance(item,int):
+			a, b = 1, 1
+			for x in range(item):
+				a, b = b, a + b
+			return a
+		if isinstance(item,slice):
+			start = item.start
+			stop = item.stop
+			if start is None:
+				start = 0
+			a, b = 1, 1
+			L = []
+			for x in range(stop):
+				if x >= start:
+					L.append(a)
+				a, b = b, a+b
+			return L
+		
+f = Fib()
+print(f[0:5])
+print(f[6:10])
