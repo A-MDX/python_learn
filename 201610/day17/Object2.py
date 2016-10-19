@@ -192,3 +192,49 @@ class Fib(object):
 f = Fib()
 print(f[0:5])
 print(f[6:10])
+
+print('------------------------')
+# 4.4 getattr
+
+class Student(object):
+	def __init__(self,name):
+		self.name = name
+		
+	def __getattr__(self, item):
+		if item is 'score':
+			return 99
+	
+m = Student('ming')
+print(m.name)  # ming
+print(m.score)  # 99
+
+#　可以针对完全动态的情况作调用
+
+class Chain(object):
+	def __init__(self,path=''):
+		self._path = path
+		
+	def __getattr__(self, item):
+		return Chain('%s/%s' % (self._path,item))
+	
+	def __str__(self):
+		return self._path
+
+c1 = Chain().status.apple.orange.list
+print(c1)   # /status/apple/orange/list
+# look,自动解析地址
+
+print('-------------------')
+
+# 4.5  __call__
+
+class Student(object):
+	
+	def __init__(self,name = 'Alex'):
+		self._name = name
+		
+	def __call__(self, *args, **kwargs):
+		print('Hello, my name is %s !' % self._name)
+		
+a = Student()
+a()   #  Hello, my name is Alex !

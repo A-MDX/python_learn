@@ -243,3 +243,60 @@ print(f[6:10])
 + 与之对应的是__setitem__()方法，把对象视作list或dict来对集合赋值。最后，还有一个__delitem__()方法，用于删除某个元素。
 + 没有对负数作处理，所以，要正确实现一个__getitem__()还是有很多工作要做的;
 + 通过上面的方法，我们自己定义的类表现得和Python自带的list、tuple、dict没什么区别，这完全归功于动态语言的“鸭子类型”，不需要强制继承某个接口
+
+#### 4.4 getattr
+
+正常情况下，调用的方法或者属性不存在时，就会报错。要避免这个错误，
+我们可以写一个`__getattr__`方法，动态返回一个属性。
+
+具体做法：
+
+```python
+class Student(object):
+	def __init__(self,name):
+		self.name = name
+		
+	def __getattr__(self, item):
+		if item is 'score':
+			return 99
+	
+m = Student('ming')
+print(m.name)  # ming
+print(m.score)  # 99
+
+#　可以针对完全动态的情况作调用
+
+class Chain(object):
+	def __init__(self,path=''):
+		self._path = path
+		
+	def __getattr__(self, item):
+		return Chain('%s/%s' % (self._path,item))
+	
+	def __str__(self):
+		return self._path
+
+c1 = Chain().status.apple.orange.list
+print(c1)   # /status/apple/orange/list
+# look,自动解析地址
+
+```
+
+返回函数也是可以的。
+
+#### 4.5 __call__
+
+可以对该对象直接执行方法
+
+```python
+class Student(object):
+	
+	def __init__(self,name = 'Alex'):
+		self._name = name
+		
+	def __call__(self, *args, **kwargs):
+		print('Hello, my name is %s !' % self._name)
+		
+a = Student()
+a()  # Hello, my name is Alex !
+```
