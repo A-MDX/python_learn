@@ -83,4 +83,5 @@ with open('/Users/michael/test.txt', 'w') as f:
 
 #### 1.3 小结
 
-在python中，使用`open()`函数来完成io，使用`with`语句是个好习惯。
++ 在python中，使用`open()`函数来完成io，使用`with`语句是个好习惯。
++ 在字符串前面加上`r`，表示后面是一个整体的字符串。
